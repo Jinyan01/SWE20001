@@ -1,0 +1,221 @@
+<style>
+	body {
+		background-image: url("background.png");
+		background-size: 100% 100%;
+	}
+	.border {
+		background-size: 100% 100%;
+		background-color: white;
+	}
+	table{
+		font-size: 20px;
+	}
+	h1{
+		font-size: 30px;
+	}
+	p{
+		font-size: 20px;
+	}
+</style>
+<div class="container">
+    <div class="row">
+        <h1>Reports</h1>
+    </div>
+    <div class="row">
+    	<div class="col-sm-12 reportBox">
+    		<!-- REPORT SELECT -->
+			<div class="row" ng-hide="selectHidden">
+				<div class="col-sm-12 selectTab">
+					<h2 class="tabTitle">Select Report</h2>
+					<button type="button" class="btn btn-default btn-lg tabButton" ng-click="showWeekly()">Weekly Sales</button><br>
+					<button type="button" class="btn btn-default btn-lg tabButton" ng-click="showMonthly()">Monthly Sales</button><br>
+					<button type="button" class="btn btn-default btn-lg tabButton" ng-click="showAll()">All Sales</button><br>
+					<button type="button" class="btn btn-default btn-lg tabButton" ng-click="showAllStock()">All Stock</button><br>
+				</div>
+			</div>
+
+			<div class="scrollable">
+				<div ng-switch="reportToShow" ng-animate="'slide'">
+					<!-- WEEKLY -->
+		    		<div class="row" ng-switch-when="1">
+		    			<div class="col-sm-12 reportTab">
+							<h2 class="tabTitle">Weekly Sales</h2>
+							<p class="tabTitle">Please generate report to view editable sales.</p>
+							<div class="row buttonContainer">
+							<label for="dateSelect">Week starting: </label>
+								<input type="date" id="dateSelect" class="hide-replaced" ng-model="startDate.value" />
+						     	<button type="button" class="btn btn-default btn-lg tabButton" ng-click="getWeeklySales()">Get Report</button>
+							</div>
+							<div class="row scrollable" ng-hide="hideTable">
+								<table class="table table-striped">
+								    <thead>
+								      <tr>
+								        <th>Sale ID</th>
+								        <th>Date/Time</th>
+										<th>Product Name</th>
+								        <th>Total Items</th>
+								        <th>Total Price</th>
+								        <th></th>
+								        <th></th>
+								      </tr>
+								    </thead>
+								    <tbody>
+								      <tr ng-repeat="sale in salesArray">
+								        <td>{{sale.ID}}</td>
+								        <td>{{sale.SaleDateTime}}</td>
+										<td>{{sale.name}}</td>
+								        <td>{{sale.TotalItems}}</td>
+								        <td>{{sale.TotalValue}}</td>
+								        <td><a ng-href="./#/sales/{{sale.ID}}">Edit</a></td>
+								        <td class="btn" ng-click="deleteSale(sale.ID)">X</td>
+								      </tr>
+								    </tbody>
+						  		</table>
+							</div>
+							<hr>
+							<div class="row buttonContainer">
+								<!-- Return to report select -->
+						     	<button type="button" class="btn btn-default btn-lg tabButton" ng-click="returnToSelect()">Return</button>
+						     	<!-- GET for generating CSV file. http://code.stephenmorley.org/php/creating-downloadable-csv-files/ -->
+ 							    <button type="button" class="btn btn-default btn-lg tabButton" ng-csv="salesArray" filename="WeeklySales{{date | date:'yyyy-MM-dd'}}.csv" field-separator="," decimal-separator=".">Generate CSV</button>
+							</div>
+						</div>
+		    		</div>
+		    		<!-- MONTHLY -->
+		    		<div class="row" ng-switch-when="2">
+		    			<div class="col-sm-12 reportTab">
+							<h2 class="tabTitle">Monthly Sales</h2>
+							<p class="tabTitle">Please generate report to view editable sales.</p>
+							<div class="row buttonContainer">
+							<label for="dateSelect">Month starting: </label>
+								<input type="date" id="dateSelect" class="hide-replaced" ng-model="startDate.value" />
+						     	<button type="button" class="btn btn-default btn-lg tabButton" ng-click="getMonthlySales()">Get Report</button>
+							</div>
+							<div class="row scrollable" ng-hide="hideTable">
+								<table class="table table-striped">
+								    <thead>
+								      <tr>
+								        <th>Sale ID</th>
+								        <th>Date/Time</th>
+										<th>Product Name</th>
+								        <th>Total Items</th>
+								        <th>Total Price</th>
+								        <th></th>
+								        <th></th>
+								      </tr>
+								    </thead>
+								    <tbody>
+								      <tr ng-repeat="sale in salesArray">
+								        <td>{{sale.ID}}</td>
+								        <td>{{sale.SaleDateTime}}</td>
+										<td>{{sale.name}}</td>
+								        <td>{{sale.TotalItems}}</td>
+								        <td>{{sale.TotalValue}}</td>
+								        <td><a ng-href="./#/sales/{{sale.ID}}">Edit</a></td>
+								        <td class="btn" ng-click="deleteSale(sale.ID)">X</td>
+								      </tr>
+								    </tbody>
+						  		</table>
+							</div>
+							<hr>
+							<div class="row buttonContainer">
+								<!-- Return to report select -->
+						     	<button type="button" class="btn btn-default btn-lg tabButton" ng-click="returnToSelect()">Return</button>
+						     	<!-- GET for generating CSV file. http://code.stephenmorley.org/php/creating-downloadable-csv-files/ -->
+ 							    <button type="button" class="btn btn-default btn-lg tabButton" ng-csv="salesArray" filename="MonthlySales{{date | date:'yyyy-MM-dd'}}.csv" field-separator="," decimal-separator=".">Generate CSV</button>
+							</div>
+						</div>
+		    		</div>
+							<!-- All Sales -->
+							<div class="row" ng-switch-when="3">
+		    			<div class="col-sm-12 reportTab">
+							<h2 class="tabTitle">All Sales</h2>
+							<p class="tabTitle">Please generate report to view editable sales.</p>
+							<div class="row buttonContainer">
+						     	<button type="button" class="btn btn-default btn-lg tabButton" ng-click="hideTable = false">Get Report</button>
+							</div>
+							<div class="row scrollable" ng-hide="hideTable">
+								<table class="table table-striped">
+								    <thead>
+								      <tr>
+								        <th>Sale ID</th>
+								        <th>Date/Time</th>
+										<th>Product Name</th>
+								        <th>Total Items</th>
+								        <th>Total Price</th>
+								        <th></th>
+								        <th></th>
+								      </tr>
+								    </thead>
+								    <tbody>
+								      <tr ng-repeat="sale in salesArray">
+								        <td>{{sale.ID}}</td>
+								        <td>{{sale.SaleDateTime}}</td>
+										<td>{{sale.name}}</td>
+								        <td>{{sale.TotalItems}}</td>
+								        <td>{{sale.TotalValue}}</td>
+								        <td><a ng-href="./#/sales/{{sale.ID}}">Edit</a></td>
+								        <td class="btn" ng-click="deleteSale(sale.ID)">X</td>
+								      </tr>
+								    </tbody>
+						  		</table>
+							</div>
+							<hr>
+							<div class="row buttonContainer">
+								<!-- Return to report select -->
+						     	<button type="button" class="btn btn-default btn-lg tabButton" ng-click="returnToSelect()">Return</button>
+						     	<!-- GET for generating CSV file. http://code.stephenmorley.org/php/creating-downloadable-csv-files/ -->
+ 							    <button type="button" class="btn btn-default btn-lg tabButton" ng-csv="salesArray" filename="AllSales{{date | date:'yyyy-MM-dd'}}.csv" field-separator="," decimal-separator=".">Generate CSV</button>
+							</div>
+						</div>
+		    		</div>
+					
+		    		<!-- Stock -->
+		    		<div class="row" ng-switch-when="4">
+		    			<div class="col-sm-12 reportTab">
+							<h2 class="tabTitle">All Stock</h2>
+							<p class="tabTitle">Please generate report to view editable sales.</p>
+							<div class="row buttonContainer">
+						     	<button type="button" class="btn btn-default btn-lg tabButton" ng-click="hideTable = false">Get Report</button>
+							</div>
+							<div class="row scrollable" ng-hide="hideTable">
+								<table class="table table-striped">
+								    <thead>
+								      <tr>
+								        <th>Product ID</th>
+								        <th>Date/Time</th>
+										<th>Product Name</th>
+								        <th>Total Items</th>
+								        <th>Total Price</th>
+								        <th></th>
+								        <th></th>
+								      </tr>
+								    </thead>
+								    <tbody>
+								      <tr ng-repeat="product in productArray">
+								        <td>{{product.id}}</td>
+								        <td>{{product.name}</td>
+										<td>{{product.Price}}</td>
+								        <td>{{product.QuantitySold}}</td>
+								        <td>{{product.QuantityOnhand}}</td>
+								        <td><a ng-href="./#/product/{product.ID}}">Edit</a></td>
+								        <td class="btn" ng-click="deleteSale(product.ID)">X</td>
+								      </tr>
+								    </tbody>
+						  		</table>
+							</div>
+							<hr>
+							<div class="row buttonContainer">
+								<!-- Return to report select -->
+						     	<button type="button" class="btn btn-default btn-lg tabButton" ng-click="returnToSelect()">Return</button>
+						     	<!-- GET for generating CSV file. http://code.stephenmorley.org/php/creating-downloadable-csv-files/ -->
+ 							    <button type="button" class="btn btn-default btn-lg tabButton" ng-csv="ProductArray" filename="MonthlySales{{date | date:'yyyy-MM-dd'}}.csv" field-separator="," decimal-separator=".">Generate CSV</button>
+							</div>
+						</div>
+		    		</div>
+					
+				</div>
+			</div>
+    	</div>
+    </div>
+</div>
